@@ -24,8 +24,6 @@ print("\n", "Numero de alice: " , sAlice)
 print("\n", "Numero de bob: " , sBob)
 print("\n", "Número de Eve: ", sEve)
 
-
-
 # Eve genera valores 
 A = pow(g, sAlice, p)
 EA = pow(g, sEve, p)
@@ -37,19 +35,25 @@ EB = pow(g, sEve, p)
 print("\n", f'Mensaje de Bob a Alice: {B}')
 
 # Alice y Bob calculan su llave secreta con el valor de Eve
-K_Alice_Eve = pow(EB, sAlice, p)  
-K_Bob_Eve = pow(EA, sBob, p)
+K_Alice_Eve = pow(EA, sAlice, p)  
+K_Bob_Eve = pow(EB, sBob, p)
 
 #Eve conoce las laves compartidas
-K_Eve_Alice = pow(A, sEve, p)
-K_Eve_Bob = pow(B, sEve, p)
+K_Eve_Alice = pow(B, sEve, p)
+K_Eve_Bob = pow(A, sEve, p)
 
-if K_Alice_Eve == K_Bob_Eve:
-    print("\n✅ MITM exitoso: Eve obtuvo la clave secreta de Alice y Bob.")
+if K_Alice_Eve == K_Eve_Bob:
+    print("\nExito: Eve obtuvo la clave secreta de Alice y Bob.")
+else:
+    print("\nError: Las llaves no coinciden.")
 
 hash_key_AE = hashlib.sha256(str(K_Alice_Eve).encode()).hexdigest()
 hash_key_BE = hashlib.sha256(str(K_Bob_Eve).encode()).hexdigest()
-print("\n Hash de la llave compartida:", hash_key_AE)
-print("\n Hash de la llave compartida:", hash_key_BE)
+hash_key_EA = hashlib.sha256(str(K_Eve_Alice).encode()).hexdigest()
+hash_key_EB = hashlib.sha256(str(K_Eve_Bob).encode()).hexdigest()
+print("\n Hash de la llave compartida Alice a Eve:", hash_key_AE)
+print("\n Hash de la llave compartida Bob a Eve:", hash_key_BE)
+print("\n Hash de la llave compartida Eve a Alice:", hash_key_EA)
+print("\n Hash de la llave compartida Bob a Alice:", hash_key_EB, "\n")
 
 
