@@ -15,24 +15,41 @@ print("\n", "**********************************")
 print("\n", "Numero privado compartido: " , p)
 print("\n", "Numero publico compartido: " , g)
 
-# Random, mensaje publico
-
+# Random, claves privadas entre Eve, Alice y Bob
+sEve = random.getrandbits(256)
 sAlice = random.getrandbits(256)
 sBob = random.getrandbits(256)
 
 print("\n", "Numero de alice: " , sAlice)
 print("\n", "Numero de bob: " , sBob)
+print("\n", "Número de Eve: ", sEve)
 
+
+
+# Eve genera valores 
 A = pow(g, sAlice, p)
+EA = pow(g, sEve, p)
+print("\n", f'Mensaje de Alice a Bob: {A}')
+
+# Bob manda mensaje a Alice pero Eve lo intercepta
 B = pow(g, sBob, p)
+EB = pow(g, sEve, p)
+print("\n", f'Mensaje de Bob a Alice: {B}')
 
-print("\n", "Mensaje de Alice a Bob: " , A)
-print("\n", "Mensaje de Bob a Alice: " , B)
+# Alice y Bob calculan su llave secreta con el valor de Eve
+K_Alice_Eve = pow(EB, sAlice, p)  
+K_Bob_Eve = pow(EA, sBob, p)
 
-# Alice calcula la llave secreta compartida
+#Eve conoce las laves compartidas
+K_Eve_Alice = pow(A, sEve, p)
+K_Eve_Bob = pow(B, sEve, p)
 
-s1 = pow(B, sAlice, p)
-s2 = pow(A, sBob, p)
+if K_Alice_Eve == K_Bob_Eve:
+    print("\n✅ MITM exitoso: Eve obtuvo la clave secreta de Alice y Bob.")
+
+hash_key_AE = hashlib.sha256(str(K_Alice_Eve).encode()).hexdigest()
+hash_key_BE = hashlib.sha256(str(K_Bob_Eve).encode()).hexdigest()
+print("\n Hash de la llave compartida:", hash_key_AE)
+print("\n Hash de la llave compartida:", hash_key_BE)
 
 
-print("\n", "Llave secreta compartida: " , s1)
